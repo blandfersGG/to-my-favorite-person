@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday, My Love 💜</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(180deg, #e6d6ff, #f5e9ff);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* === Global Full-Page Styles === */
+    #opening-page, #envelope-page {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(180deg, #e6d6ff, #f5e9ff);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      text-align: center;
+      transition: opacity 0.5s ease-out; /* For smooth transition */
+    }
+    
+    #envelope-page {
+        /* Start hidden, only visible after opening page */
+        opacity: 0; 
+        visibility: hidden;
+    }
+    
+    /* === Opening Page (Initial View) === */
+    #opening-page h1 {
+      font-family:'Great Vibes', cursive;
+      font-size:3em;
+      color:#7b61ff;
+      margin-bottom:20px;
+    }
+
+    #opening-page p {
+      font-size:1.3em;
+      color:#5c4b7d;
+      margin-bottom:40px;
+    }
+
+    #opening-page button {
+      padding:15px 30px;
+      font-size:1.1em;
+      border:none;
+      border-radius:25px;
+      background:#7b61ff;
+      color:white;
+      cursor:pointer;
+      transition: transform 0.2s;
+    }
+
+    #opening-page button:hover {
+      transform: scale(1.05);
+    }
+    
+    /* === Envelope Page (Animation) === */
+    .envelope-container {
+        width: 300px;
+        height: 200px;
+        position: relative;
+        cursor: pointer;
+        perspective: 1000px;
+    }
+
+    /* Envelope base */
+    .envelope {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: #fce4ec; /* Light pink/cream */
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    /* Envelope Flap (Top) */
+    .envelope-flap {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 50%;
+        background-color: #ffcdd2; /* Slightly darker pink */
+        border-radius: 0 0 50px 50px / 0 0 10px 10px;
+        transform-origin: top;
+        transition: transform 0.5s ease-in-out;
+        z-index: 2;
+    }
+    
+    .envelope-container:hover .envelope-flap,
+    .envelope-container.open .envelope-flap {
+        transform: rotateX(180deg);
+        z-index: 0; /* Move behind for open effect */
+    }
+
+    /* Decorative V-shape overlay */
+    .envelope::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: 1;
+        /* V-shape using border trick */
+        border-left: 150px solid transparent;
+        border-right: 150px solid transparent;
+        border-top: 100px solid #ffcdd2;
+        border-radius: 10px;
+    }
+
+    /* Letter inside */
+    .letter-inside {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) translateY(0);
+        width: 80%;
+        height: 80%;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        z-index: 1;
+        transition: transform 1s ease-out;
+        padding: 20px;
+        text-align: center;
+        font-family: 'Great Vibes', cursive;
+        font-size: 1.5em;
+        color: #7b61ff;
+        opacity: 0; /* Start hidden */
+    }
+
+    .envelope-container.open .letter-inside {
+        transform: translate(-50%, -50%) translateY(-100px); /* Move letter up */
+        opacity: 1;
+    }
+    
+    .envelope-page-text {
+        font-size: 1.2em;
+        color: #5c4b7d;
+        margin-top: 50px;
+        transition: opacity 0.5s;
+    }
+    
+    .envelope-container.open + .envelope-page-text {
+        opacity: 0;
+    }
+
+    /* === Existing Styles (Condensed) === */
+    .container {
+      display: flex; align-items: flex-start; justify-content: center; gap: 40px;
+      max-width: 1200px; margin: 60px auto; padding: 0 20px; z-index: 10;
+    }
+    .letter-box {
+      background: rgba(255, 255, 255, 0.85); padding: 40px; border-radius: 20px;
+      max-width: 600px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .letter-box h1 {
+      font-family: 'Great Vibes', cursive; font-size: 2.8em; color: #7b61ff; margin-bottom: 20px;
+    }
+    .letter-box p {
+      font-size: 1.1em; line-height: 1.8; color: #4b3b6b;
+    }
+    .photo-column {
+      display: flex; flex-direction: column; gap: 25px; align-items: center; justify-content: center;
+    }
+    .polaroid {
+      background: white; padding: 10px; border-radius: 10px; width: 140px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+      transform: rotate(calc(-3deg + 6deg * var(--rand))); transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+    .polaroid:hover {
+      transform: scale(1.07) rotate(0deg); box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+    }
+    .polaroid img {
+      width: 100%; height: auto; border-radius: 5px;
+    }
+    .polaroid p {
+      font-size: 0.8em; margin-top: 8px; color: #5c4b7d; text-align: center;
+    }
+    .gallery {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 25px;
+      max-width: 1100px; margin: 60px auto; padding: 0 20px 80px;
+    }
+    .gallery .polaroid {
+      width: 180px; transition: transform 0.4s ease, box-shadow 0.3s ease;
+    }
+    .gallery .polaroid:hover {
+      transform: translateY(-10px) rotate(0deg) scale(1.05); box-shadow: 0 12px 20px rgba(0,0,0,0.25);
+    }
+    /* Lightbox */
+    .lightbox {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; opacity: 0; visibility: hidden;
+      transition: opacity 0.3s ease; z-index: 50; padding: 20px; text-align: center;
+    }
+    .lightbox.active {
+      opacity: 1; visibility: visible;
+    }
+    .lightbox img {
+      max-width: 90%; max-height: 80%; border-radius: 15px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.3); animation: popIn 0.3s ease;
+      margin-bottom: 15px;
+    }
+    .lightbox p {
+      font-size: 1.2em; color: #fff; font-family: 'Great Vibes', cursive; max-width: 90%;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .heart, .balloon {
+      position: absolute; bottom: -50px; opacity: 0.8;
+      animation: rise 10s linear infinite; z-index: 1;
+    }
+    .heart { color: #ff8acb; font-size: 20px; }
+    .balloon { font-size: 25px; color: #a88bff; }
+    @keyframes rise {
+      0% { transform: translateY(0) scale(1); opacity: 0.8; }
+      100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
+    }
+    .music-control {
+      position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.7);
+      border: none; padding: 10px 15px; border-radius: 20px; cursor: pointer;
+      font-size: 14px; color: #5c4b7d; z-index: 20; transition: background 0.3s;
+    }
+    .music-control:hover { background: rgba(255,255,255,0.9); }
+    @media (max-width:900px) {
+      .container { flex-direction: column; align-items: center; }
+      .photo-column { flex-direction: row; flex-wrap: wrap; gap: 15px; }
+      .polaroid { width: 120px; }
+      .gallery .polaroid { width: 140px; }
+      .lightbox p { font-size: 1em; }
+    }
+  </style>
+</head>
+<body>
+  <audio id="bg-music" src="music/Aphrodite - The Ridleys (youtube).mp3" loop></audio>
+  <button class="music-control" onclick="toggleMusic()">⏸ Pause Music</button>
+
+  <div id="opening-page">
+    <h1>Happy Birthday, My Love 💜</h1>
+    <p>I made something special for you…</p>
+    <button onclick="showEnvelope()">Open Your Gift 💜</button>
+  </div>
+  
+  <div id="envelope-page">
+    <div class="envelope-container" onclick="openEnvelope()">
+        <div class="envelope">
+            <div class="letter-inside">
+                A love letter is waiting for you...
+            </div>
+            <div class="envelope-flap"></div>
+        </div>
+    </div>
+    <p class="envelope-page-text" id="envelope-instruction">Click the envelope to see what's inside!</p>
+  </div>
+
+  <div id="main-content" style="display:none;">
+    <div class="container">
+      <div class="photo-column">
+        <div class="polaroid" style="--rand: 0.2;">
+          <img src="pictures/my favourite photo of yours..jpg" alt="Memory 1">
+          <p>11/05/25 - My favourite photo of yours 💕</p>
+        </div>
+        <div class="polaroid" style="--rand: -0.3;">
+          <img src="pictures/the picture that makes me fall for you.jpg" alt="Memory 2">
+          <p>10/09/25 - The picture that made me fall for you 😘</p>
+        </div>
+        <div class="polaroid" style="--rand: 0.1;">
+          <img src="pictures/my wife.jpg" alt="Memory 3">
+          <p>Wife 💜</p>
+        </div>
+         <div class="polaroid" style="--rand: 0.2;">
+          <img src="pictures/ivy workmode.jpg" alt="Memory 1">
+          <p> Casual but lovable 💕</p>
+        </div>
+        <div class="polaroid" style="--rand: -0.3;">
+          <img src="pictures/ivy nerds.jpg" alt="Memory 2">
+          <p>10/09/25 - Nerds 😁</p>
+        </div>
+        <div class="polaroid" style="--rand: -0.2;">
+          <img src="pictures/ivy flip off.jpg" alt="Memory 3">
+          <p>slay</p>
+        </div>
+      </div>
+
+      <div class="letter-box">
+        <h1>Happy Birthday, My Love 💜</h1>
+        <p>
+          I just want to say that you are the most amazing person I have ever met. 
+          Your kindness, your laughter, your beautiful soul - they light up my life in ways I
+          can't even put into words. You were the best thing that ever happened to me,
+          and I am so grateful to have you by my side. Even though we have only known each other
+          for a short time, it feels like I've known you forever.
+          <br><br>
+          On this special day, I want to remind you of how much you mean to me. 
+          You are my rock, my confidant, and my best friend. 
+          I really want to spend the rest of my life making you 
+          happy and creating beautiful memories together. 
+          <br><br>
+          You help me become a better person every day, and I am constantly 
+          inspired by your strength and resilience.
+          I may sometimes struggle to express my feelings, and sometimes I may
+          go overboard with my actions and I tend to irritate you by questioning you a lot,
+          but please know that everything I do is because I care about you deeply. 
+          I want to be the person you can depend on.
+          You are the reason I believe in love and all the wonderful things it can bring.
+          <br><br>
+          I know that you are in pain right now, I really do, and it breaks 
+          my heart to see you like this. But please remember that you are not alone. 
+          I am here for you, always. We will get through this together, hand in hand.
+          I may not be by yourside right now but I promise you that we will be together soon.
+          You became the reason I wake up every morning with a smile on my face,
+          and I can't wait to see what the future holds for us.
+          <br><br>
+          You deserve all the happiness in the world. I’m so lucky to be the one who gets to 
+          make you smile every day. 
+          <br><br>
+          Happy Birthday, my Love. 🎂💐 
+          <br>
+          Forever yours, 
+          <br>
+          <em>Keane</em>
+        </p>
+      </div>
+
+      <div class="photo-column">
+        <div class="polaroid" style="--rand: -0.1;">
+          <img src="pictures/Ivy my love.jpg" alt="Memory 4">
+          <p>10/20/25 - Your first surprise for me 💞</p>
+        </div>
+        <div class="polaroid" style="--rand: 0.2;">
+          <img src="pictures/Your gentle face when you sleep.jpg" alt="Memory 5">
+          <p>11/10/25 - Your gentle face when you sleep 🥰</p>
+        </div>
+        <div class="polaroid" style="--rand: -0.2;">
+          <img src="pictures/ivy cebu.jpg" alt="Memory 6">
+          <p>10/17/25 - The day I decided that I really love you 🌸</p>
+        </div>
+        <div class="polaroid" style="--rand: -0.1;">
+          <img src="pictures/ivy wlw.jpg" alt="Memory 4">
+          <p>10/20/25 - You in your most hated hairstyle but I love it tho 💞</p>
+        </div>
+        <div class="polaroid" style="--rand: -0.3;">
+          <img src="pictures/ivy sexy.jpg" alt="Memory 5">
+          <p>11/10/25 - 10/10 🥰</p>
+        </div>
+        <div class="polaroid" style="--rand: -0.4;">
+          <img src="pictures/beautiful in balck.jpg" alt="Memory 6">
+          <p>One of the first pictures you sent. 🌸</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="gallery">
+      <div class="polaroid" style="--rand: 0.1;">
+        <img src="pictures/whatever face you make, you're still beautiful..jpg" alt="Extra Memory 1">
+        <p>Cutesy</p>
+      </div>
+      <div class="polaroid" style="--rand: -0.2;">
+        <img src="pictures/would.jpg" alt="Extra Memory 2">
+        <p>would💖</p>
+      </div>
+      <div class="polaroid" style="--rand: 0.3;">
+        <img src="pictures/us being silly.jpg" alt="Extra Memory 3">
+        <p>Us being silly 😂</p>
+      </div>
+      <div class="polaroid" style="--rand: -0.1;">
+        <img src="pictures/Power Couple.jpg" alt="Extra Memory 4">
+        <p>Power Couple 💕</p>
+      </div>
+    </div>
+
+    <div class="lightbox" id="lightbox">
+      <img src="" alt="Expanded photo">
+      <p id="lightbox-caption"></p>
+    </div>
+  </div>
+
+  <script>
+    const music = document.getElementById('bg-music');
+    const btn = document.querySelector('.music-control');
+
+    // Transition from opening page to envelope page
+    function showEnvelope() {
+      // **NEW: Start the music immediately on the first user click**
+      music.play().catch(error => {
+        // Handle case where play() might still be blocked or fail (rare after a click)
+        console.log("Music play failed:", error);
+      });
+      
+      const openingPage = document.getElementById('opening-page');
+      const envelopePage = document.getElementById('envelope-page');
+      
+      openingPage.style.opacity = '0';
+      setTimeout(() => {
+        openingPage.style.display = 'none';
+        envelopePage.style.visibility = 'visible';
+        envelopePage.style.opacity = '1';
+      }, 500); // Wait for the fade-out transition
+    }
+    
+    // Open the envelope and transition to the main content
+    function openEnvelope() {
+        const envelopeContainer = document.querySelector('.envelope-container');
+        const envelopePage = document.getElementById('envelope-page');
+        
+        // Prevent double-clicking
+        if (envelopeContainer.classList.contains('open')) return;
+        
+        envelopeContainer.classList.add('open');
+        
+        // Wait for the envelope and letter animation to complete
+        setTimeout(() => {
+            envelopePage.style.opacity = '0';
+        }, 1200); // 1.2s: Flap (0.5s) + Letter rise (1s) overlap
+        
+        // Final transition to main content
+        setTimeout(() => {
+            envelopePage.style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            window.scrollTo(0, 0); // Scroll to top of the main content
+        }, 1700); // 1.2s + 0.5s fade out
+    }
+    
+    // Music controls
+    function toggleMusic() {
+      if (music.paused) {
+        music.play();
+        btn.textContent = '⏸ Pause Music';
+      } else {
+        music.pause();
+        btn.textContent = '▶ Play Music';
+      }
+    }
+
+    // Floating hearts & balloons
+    const body = document.body;
+    function createFloatingEmoji(emojiClass, symbol) {
+      const el = document.createElement('div');
+      el.classList.add(emojiClass);
+      el.textContent = symbol;
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.animationDuration = 8 + Math.random() * 5 + 's';
+      body.appendChild(el);
+      setTimeout(() => el.remove(), 10000);
+    }
+    setInterval(() => {
+      createFloatingEmoji('heart', '❤');
+      if (Math.random() > 0.6) createFloatingEmoji('balloon', '🎈');
+    }, 1000);
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = lightbox.querySelector('img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    document.querySelectorAll('.polaroid img').forEach(img => {
+      // Find the corresponding caption from the parent polaroid
+      const caption = img.parentElement.querySelector('p').textContent;
+      img.addEventListener('click', () => {
+        lightbox.classList.add('active');
+        lightboxImg.src = img.src;
+        lightboxCaption.textContent = caption;
+      });
+    });
+    lightbox.addEventListener('click', () => {
+      lightbox.classList.remove('active');
+    });
+  </script>
+</body>
+</html>
